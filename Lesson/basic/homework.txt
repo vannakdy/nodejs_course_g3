@@ -1,0 +1,50 @@
+
+
+- console.log
+- string, number, floating number
+- let const var 
+    - var x = 10, y = 5
+    - find sum 
+    - find sub 
+    - find mul
+    - find dev
+    - find min number 
+    - find max number
+- array string , array number 
+    - show element array by index
+    - show last element in array
+- object
+    - create an object and access key of object
+    - create sub object and access sub key of object
+- create a function() , a function with parameter and call
+
+
+- condition
+    if , if else , if else if 
+- loop
+    + for loop
+        for (let i = 0; i < cars.length; i++) {
+            text += cars[i] + "<br>";
+        }
+    + for in 
+        let text = "";
+        for (let x in person) {
+            text += person[x];
+        }
+    + for of 
+        for (let x of cars) {
+            text += x;
+        }
+    + while 
+        while (i < 10) {
+            text += "The number is " + i;
+            i++;
+        }
+    + do while 
+        do {
+            text += "The number is " + i;
+        }while (i < 10)
+
+    
+
+
