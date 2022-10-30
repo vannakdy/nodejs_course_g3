@@ -1,8 +1,12 @@
 const express = require("express");
 const db = require("./src/config/db");
 const app = express();
-
+const cors = require("cors")
+var corsOptions = {
+    origin: "*"
+};
 app.use(express.json())
+app.use(cors(corsOptions));
 
 app.get("/",(req,res)=>{
     res.send("")

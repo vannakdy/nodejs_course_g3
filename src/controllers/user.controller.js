@@ -1,5 +1,35 @@
 
 const db = require("../config/db")
+const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
+const secret_access_token = "DJOEUOI#**+%*($40953080983409806093KLJEKnkdlkoiojl2JDLKe";
+const secret_refresh_token = "ijrtjJDKELklkjl45898454985";
+
+const validateToken = (req,res) => {
+    var token = req.headers.authorization;
+    if(token){
+        token = token.split(" ")
+        token = token[1]
+        jwt.verify(token,secret_access_token,(err,objectInof)=>{
+            if(!err){
+                res.json({
+                    message: "Incorrect token",
+                    userInfo : objectInof
+                })
+            }else{
+                res.json({
+                    error: true,
+                    message: err
+                })
+            }
+        })
+    }else{
+        res.json({
+            error: true,
+            message: "Plaase fill in token!"
+        })
+    }
+}
 
 const getList = (req,res) => {
     db.query("SELECT * FROM user;",(err,result)=>{
@@ -43,8 +73,9 @@ const create = (req,res) => {
         })
         return false
     }
+    var password = bcrypt.hashSync(body.password,10) // 123456 => JDKLEIOKSNLEKjkk398203808345980834590
     var sqlInsert = "INSERT INTO user (username,password,email,tel) VALUES (?,?,?,?)";
-    db.query(sqlInsert,[body.username, body.password, body.email,body.tel ],(err,result)=>{
+    db.query(sqlInsert,[body.username, password, body.email,body.tel ],(err,result)=>{
         if(!err){
             res.json({
                 message : "Insert success!"
@@ -56,6 +87,58 @@ const create = (req,res) => {
             }) 
         }
     })
+}
+
+const login = (req,res) => {
+    var body = req.body;
+    var message = {};
+    if(body.username == "" || body.username == null){
+        message["username"] = "Please fill in  username!";
+    }
+    if(body.password == "" || body.password == null){
+        message["password"] = "Please fill in  password!";
+    }
+    if(Object.keys(message).length > 0){
+        res.json({
+            error : true,
+            message : message
+        })
+        return false
+    }
+    // check is existing user
+    db.query("SELECT * , COUNT(user_id) as total FROM user WHERE username = ?",[body.username],(err,result)=>{
+        var user = result
+        if(!err){
+            if(user[0].total != 0){
+                user = user[0];
+                // check is correct password
+                if(bcrypt.compareSync(body.password,user.password)){
+                    user.password = undefined;
+                    // generate jwt token for client
+                    var access_token = jwt.sign({user:user},secret_access_token,{expiresIn:60})
+                    var refresh_token = jwt.sign({user:user},secret_refresh_token,{expiresIn:90})
+                    res.json({
+                        message : "login success!",
+                        user : user,
+                        access_token : access_token,
+                        refresh_token : refresh_token
+                    })
+                }else{
+                    res.json({
+                        error : true,
+                        message : "Incorrect password!"
+                    })
+                }
+            }else{
+                res.json({
+                    error : true,
+                    message : "User does not exist!"
+                })
+            }
+           
+        }
+    })
+
 }
 
 const update = (req,res) => {
@@ -136,6 +219,8 @@ const assignrole = (req,res) => {
 module.exports = {
     getList,
     create,
+    login,
     update,
-    assignrole
+    assignrole,
+    validateToken
 }
