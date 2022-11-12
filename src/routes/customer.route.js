@@ -9,9 +9,9 @@ const customer = (app) => {
 
 
     app.get("/api/customer",validateToken,cutomerController.getList);
-    app.post("/api/customer",cutomerController.create)
-    app.put("/api/customer",cutomerController.update)
-    app.delete("/api/customer",cutomerController.remove)
+    app.post("/api/customer",validateToken,cutomerController.create)
+    app.put("/api/customer",validateToken,cutomerController.update)
+    app.delete("/api/customer",validateToken,cutomerController.remove)
 }
 
 module.exports = customer;

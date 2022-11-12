@@ -5,17 +5,20 @@ const jwt = require("jsonwebtoken")
 const secret_access_token = "DJOEUOI#**+%*($40953080983409806093KLJEKnkdlkoiojl2JDLKe";
 const secret_refresh_token = "ijrtjJDKELklkjl45898454985";
 
-const validateToken = (req,res) => {
+const validateToken = (req,res,next) => {
     var token = req.headers.authorization;
     if(token){
         token = token.split(" ")
         token = token[1]
         jwt.verify(token,secret_access_token,(err,objectInof)=>{
             if(!err){
-                res.json({
-                    message: "Incorrect token",
-                    userInfo : objectInof
-                })
+                // res.json({
+                //     message: "Incorrect token",
+                //     user : objectInof.user
+                // })
+                req.user = objectInof.user;
+                next();
+
             }else{
                 res.json({
                     error: true,
@@ -27,6 +30,35 @@ const validateToken = (req,res) => {
         res.json({
             error: true,
             message: "Plaase fill in token!"
+        })
+    }
+}
+
+const refreshToken = (req,res) => {
+    var refresh_token = req.body.refresh_token;
+    if(refresh_token == "" || refresh_token == null){
+        res.json({
+            error:true,
+            message:"Please fill in refresh toekn!"
+        })
+    }else{
+        jwt.verify(refresh_token,secret_refresh_token,(err,objInfo)=>{
+            if(!err){
+                // provide new user info and token,refresh to client
+                var access_token = jwt.sign({user:objInfo.user},secret_access_token,{expiresIn:60})
+                var refresh_token = jwt.sign({user:objInfo.user},secret_refresh_token,{expiresIn:"1h"})
+                res.json({
+                    message : "login success!",
+                    user : objInfo.user,
+                    access_token : access_token,
+                    refresh_token : refresh_token
+                })
+            }else{
+                res.json({
+                    error : true,
+                    message:err
+                })
+            }
         })
     }
 }
@@ -116,7 +148,7 @@ const login = (req,res) => {
                     user.password = undefined;
                     // generate jwt token for client
                     var access_token = jwt.sign({user:user},secret_access_token,{expiresIn:60})
-                    var refresh_token = jwt.sign({user:user},secret_refresh_token,{expiresIn:90})
+                    var refresh_token = jwt.sign({user:user},secret_refresh_token,{expiresIn:"1h"})
                     res.json({
                         message : "login success!",
                         user : user,
@@ -222,5 +254,6 @@ module.exports = {
     login,
     update,
     assignrole,
-    validateToken
+    validateToken,
+    refreshToken
 }
