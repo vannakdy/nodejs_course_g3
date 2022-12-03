@@ -170,7 +170,6 @@ API NODE.JS + MySQL => Build API (Shool,Sale,Hospital,...)
         router.get("/api/student",handler)
         router.post("/api/student",handler)
         router.put("/api/student",handler)
-
     }
 
 - create controller
@@ -195,3 +194,56 @@ API NODE.JS + MySQL => Build API (Shool,Sale,Hospital,...)
         - create new node application
 
 
+
+// server = localhost:8080 or server = https://nodejs-course-g2.vercel.app/
+// method (GET,POST,PUT,DELETE)
++ Customer
+    - list customer
+        - url : server/api/customer 
+        - method : GET 
+        - body : {
+
+        }
+        - response
+            list : [],
+    - create customer
+        - url : server/api/customer 
+        - method : POST 
+        - body : {
+            firstname : "", // not null
+            lastname : "", // not null
+            gender : "", // 1 , 0
+            email :"", // string
+            tel : "" // string
+            status: ""
+        }
+        - response
+            res : {
+                message: ""
+            },
+        
+    - update customer
+        - url : server/api/customer 
+        - method : PUT 
+        - body : {
+            customer_id : id //not null
+            firstname : "", // not null
+            lastname : "", // not null
+            gender : "", // 1 , 0
+            email :"", // string
+            tel : "" // string
+        }
+        - response
+            res : {
+                message: ""
+            },
+    - remove customer
+        - url : server/api/customer 
+        - method : DELETE 
+        - body : {
+            customer_id : id //not null
+        }
+        - response
+            res : {
+                message: ""
+            },

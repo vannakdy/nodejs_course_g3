@@ -2,7 +2,7 @@
 const db = require("../config/db")
 const getList = (req,res) => {
     console.log(req.user)
-    db.query("SELECT * FROM customer;",(err,result)=>{
+    db.query("SELECT * FROM customer ORDER BY customer_id DESC;",(err,result)=>{
         if(!err){
             res.json({
                 list : result
